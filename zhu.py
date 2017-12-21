@@ -96,7 +96,7 @@ def vote(proxy_str):
     request.set_proxy(proxy_elem['ip'] + ':' + proxy_elem['port'], 'http')
 
     try:
-        result = opener.open(request, timeout=10).read().decode('unicode-escape')
+        result = opener.open(request, timeout=12).read().decode('unicode-escape')
         print(result + '@' + proxy_elem['ip'])
         usable_proxy.add(proxy_str)
     except socket.timeout:
@@ -127,7 +127,7 @@ def load_proxy():
 
 
 def for_every_proxy(proxy):
-    for i in range(0, 10):
+    for i in range(0, 12):
         vote(proxy)
         time.sleep(random.random() * 2)
 
@@ -143,6 +143,7 @@ class ProxyThread(threading.Thread):
 
 if __name__ == '__main__':
     proxies = load_proxy()
+    f_out = open('proxy.list.tmp', 'a+')
     t_list = []
     for proxy in proxies:
         t_list.append(ProxyThread(proxy))
@@ -150,7 +151,7 @@ if __name__ == '__main__':
         t.start()
     for t in t_list:
         t.join()
-    f_out = open('proxy.list.tmp', 'w')
     for p in usable_proxy:
         f_out.write(p)
+    print(len(usable_proxy))
     f_out.close()
