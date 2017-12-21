@@ -142,16 +142,19 @@ class ProxyThread(threading.Thread):
 
 
 if __name__ == '__main__':
-    proxies = load_proxy()
+    proxies = list(load_proxy())
     f_out = open('proxy.list.tmp', 'a+')
+
     t_list = []
     for proxy in proxies:
         t_list.append(ProxyThread(proxy))
+
     for t in t_list:
         t.start()
     for t in t_list:
         t.join()
+
     for p in usable_proxy:
-        f_out.write(p)
+        f_out.write(p + '\n')
     print(len(usable_proxy))
     f_out.close()
