@@ -49,7 +49,8 @@ class UserAgent:
         elif self.agent['platform'] == 'Windows':
             self.agent['os'] = random.choice(
                 ['Win3.11', 'WinNT3.51', 'WinNT4.0', 'Windows NT 5.0', 'Windows NT 5.1', 'Windows NT 5.2',
-                 'Windows NT 6.0', 'Windows NT 6.1', 'Windows NT 6.2', 'Win95', 'Win98', 'Win 9x 4.90', 'WindowsCE'])
+                 'Windows NT 6.0', 'Windows NT 6.1', 'Windows NT 6.2', 'Win95', 'Win98', 'Win 9x 4.90', 'WindowsCE',
+                 'Windows NT 10.0'])
         elif self.agent['platform'] == 'X11':
             self.agent['os'] = random.choice(['Linux i686', 'Linux x86_64'])
 
@@ -63,12 +64,6 @@ class UserAgent:
 def vote(proxy_str):
     global usable_proxy
 
-    def generate_ip():
-        return '127.0.0.1'
-        return str(random.randint(0, 255)) + '.' + str(random.randint(0, 255)) + '.' + str(
-            random.randint(0, 255)) + '.' + str(random.randint(0, 255));
-
-    ip = generate_ip()
     ua = UserAgent()
     header = {
         'Host': 'focus.uestc.edu.cn',
