@@ -145,7 +145,7 @@ def for_every_thread():
                 print('******** full vote ********')
                 break
             time.sleep(random.random() * 2)
-        print('######## progress:%d/%d ########' % (proxy_queue.qsize(), proxy_sum))
+        print('######## progress:%d/%d voted:%d ########' % (proxy_queue.qsize(), proxy_sum, count))
 
 
 class ProxyThread(threading.Thread):
