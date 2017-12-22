@@ -120,19 +120,19 @@ def vote(proxy_str):
 
 
 def load_proxy():
-    proxy_list = set()
+    proxy_set = set()
     f_in = open('proxy.list', 'r', encoding='utf-8')
     for line in f_in.readlines():
         line = line.strip()
         if len(line.split('@')) < 3:
             continue
-        proxy_list.add(
-            line.split('@')[0] +
-            '@' + line.split('@')[1] +
-            '@' + line.split('@')[2].lower()
+        proxy_set.add(
+            line.split('@')[0].strip() +
+            '@' + line.split('@')[1].strip() +
+            '@' + line.split('@')[2].lower().strip()
         )
     f_in.close()
-    return proxy_list
+    return list(proxy_set)
 
 
 def for_every_thread():
@@ -154,7 +154,8 @@ class ProxyThread(threading.Thread):
 
 
 if __name__ == '__main__':
-    proxies = list(load_proxy())
+    global proxy_queue
+    proxies = load_proxy()
     proxy_queue = queue.Queue(proxies)
 
     thread_number = 100
