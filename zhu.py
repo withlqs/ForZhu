@@ -9,6 +9,7 @@ from http.cookiejar import CookieJar
 
 usable_proxy = set()
 proxy_queue = queue.Queue()
+proxy_sum = 0
 
 
 class UserAgent:
@@ -143,6 +144,7 @@ def for_every_thread():
             if not vote(proxy):
                 break
             time.sleep(random.random() * 3)
+        print('progress:%d/%d' % (len(proxy_queue), proxy_sum))
 
 
 class ProxyThread(threading.Thread):
@@ -155,6 +157,7 @@ class ProxyThread(threading.Thread):
 
 if __name__ == '__main__':
     proxies = load_proxy()
+    proxy_sum = len(proxies)
     for proxy in proxies:
         proxy_queue.put(proxy)
 
