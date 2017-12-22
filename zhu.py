@@ -23,17 +23,15 @@ class UserAgent:
         if self.agent['browser'] == 'Chrome':
             webkit = str(random.randint(500, 599))
             version = "%s.0%s.%s" % (
-            str(random.randint(0, 24)), str(random.randint(0, 1500)), str(random.randint(0, 999)))
-
+                str(random.randint(0, 24)), str(random.randint(0, 1500)), str(random.randint(0, 999)))
             return "Mozilla/5.0 (%s) AppleWebKit/%s.0 (KHTML, live Gecko) Chrome/%s Safari/%s" % (
-            self.agent['os'], webkit, version, webkit)
+                self.agent['os'], webkit, version, webkit)
         elif self.agent['browser'] == 'Firefox':
             year = str(random.randint(2000, 2015))
             month = str(random.randint(1, 12)).zfill(2)
             day = str(random.randint(1, 28)).zfill(2)
             gecko = "%s%s%s" % (year, month, day)
             version = "%s.0" % (str(random.randint(1, 15)))
-
             return "Mozillia/5.0 (%s; rv:%s) Gecko/%s Firefox/%s" % (self.agent['os'], version, gecko, version)
         elif self.agent['browser'] == 'IE':
             version = "%s.0" % (str(random.randint(1, 10)))
@@ -43,7 +41,6 @@ class UserAgent:
                 token = "%s;" % (random.choice(['.NET CLR', 'SV1', 'Tablet PC', 'Win64; IA64', 'Win64; x64', 'WOW64']))
             else:
                 token = ''
-
             return "Mozilla/5.0 (compatible; MSIE %s; %s; %sTrident/%s)" % (version, self.agent['os'], token, engine)
 
     def get_os(self):
