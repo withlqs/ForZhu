@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import queue
 import random
 import socket
 import threading
@@ -7,6 +8,7 @@ import urllib.request
 from http.cookiejar import CookieJar
 
 usable_proxy = set()
+proxy_queue = queue.Queue()
 
 
 class UserAgent:
@@ -99,6 +101,8 @@ def vote(proxy_str):
         result = opener.open(request, timeout=12).read().decode('unicode-escape')
         print(result + '@' + proxy_elem['ip'])
         usable_proxy.add(proxy_str)
+        if result.find('投票上限') == -1:
+            return False
     except socket.timeout:
         print('bad proxy:' + proxy_elem['ip'])
     except ConnectionResetError:
@@ -111,6 +115,8 @@ def vote(proxy_str):
         print('bad proxy:' + proxy_elem['ip'])
     except urllib.error.URLError:
         print('bad proxy:' + proxy_elem['ip'])
+    finally:
+        return True
 
 
 def load_proxy():
@@ -129,42 +135,41 @@ def load_proxy():
     return proxy_list
 
 
-def for_every_proxy(proxy):
-    for i in range(0, 12):
-        vote(proxy)
-        time.sleep(random.random() * 3)
+def for_every_thread():
+    global proxy_queue
+    while not proxy_queue.empty():
+        proxy = proxy_queue.get()
+        for loop in range(0, 12):
+            if not vote(proxy):
+                break
+            time.sleep(random.random() * 3)
 
 
 class ProxyThread(threading.Thread):
-    def __init__(self, proxy):
+    def __init__(self):
         super().__init__()
-        self.proxy = proxy
 
     def run(self):
-        for_every_proxy(self.proxy)
+        for_every_thread()
 
 
 if __name__ == '__main__':
     proxies = list(load_proxy())
+    proxy_queue = queue.Queue(proxies)
+
+    thread_number = 100
+    thread_list = []
+    for i in range(thread_number):
+        thread_list.append(ProxyThread())
+
+    for thread in thread_list:
+        thread.start()
+    for thread in thread_list:
+        thread.join()
+
     f_out = open('proxy.list.tmp', 'a+')
-    group_num = 100
-
-    t_list = []
-    for proxy in proxies:
-        t_list.append(ProxyThread(proxy))
-
-    for st in range(0, len(t_list), group_num):
-        for i in range(st, min(st + group_num, len(t_list))):
-            t_list[i].start()
-        for i in range(st, min(st + group_num, len(t_list))):
-            t_list[i].join()
-
-    # for t in t_list:
-    #     t.start()
-    # for t in t_list:
-    #     t.join()
-
     for p in usable_proxy:
         f_out.write(p.strip() + '\n')
-    print(len(usable_proxy))
     f_out.close()
+
+    print(len(usable_proxy))
