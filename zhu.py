@@ -170,7 +170,7 @@ if __name__ == '__main__':
     for proxy in proxies:
         proxy_queue.put(proxy)
 
-    thread_number = 100
+    thread_number = 200
     thread_list = []
     for i in range(thread_number):
         thread_list.append(ProxyThread())
