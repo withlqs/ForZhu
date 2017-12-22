@@ -143,7 +143,7 @@ def for_every_thread():
         for loop in range(0, 12):
             if not vote(proxy):
                 break
-            time.sleep(random.random() * 3)
+            time.sleep(random.random() * 2)
         print('progress:%d/%d' % (len(proxy_queue), proxy_sum))
 
 
