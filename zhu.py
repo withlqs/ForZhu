@@ -100,11 +100,16 @@ def vote(proxy_str):
     try:
         result = str(opener.open(request, timeout=12).read().decode('unicode-escape'))
         print(result + '@' + proxy_elem['ip'])
-        usable_proxy.add(proxy_str)
         if result.find('投票上限') != -1:
+            usable_proxy.add(proxy_str)
             return False
-        if result.find('投票成功!') != -1:
+        elif result.find('投票成功') != -1:
             count += 1
+            usable_proxy.add(proxy_str)
+            return True
+        else:
+            return True
+
     except socket.timeout:
         print('bad proxy:' + proxy_elem['ip'])
     except ConnectionResetError:
