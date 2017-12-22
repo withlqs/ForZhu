@@ -154,9 +154,9 @@ class ProxyThread(threading.Thread):
 
 
 if __name__ == '__main__':
-    global proxy_queue
     proxies = load_proxy()
-    proxy_queue = queue.Queue(proxies)
+    for proxy in proxies:
+        proxy_queue.put(proxy)
 
     thread_number = 100
     thread_list = []
