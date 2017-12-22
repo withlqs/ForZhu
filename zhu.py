@@ -10,6 +10,7 @@ from http.cookiejar import CookieJar
 usable_proxy = set()
 proxy_queue = queue.Queue()
 proxy_sum = 0
+count = 0
 
 
 class UserAgent:
@@ -63,6 +64,7 @@ class UserAgent:
 
 def vote(proxy_str):
     global usable_proxy
+    global count
 
     ua = UserAgent()
     header = {
@@ -96,11 +98,13 @@ def vote(proxy_str):
     request.set_proxy(proxy_elem['ip'] + ':' + proxy_elem['port'], 'http')
 
     try:
-        result = opener.open(request, timeout=12).read().decode('unicode-escape')
+        result = str(opener.open(request, timeout=12).read().decode('unicode-escape'))
         print(result + '@' + proxy_elem['ip'])
         usable_proxy.add(proxy_str)
-        if result.find('投票上限') == -1:
+        if result.find('投票上限') != -1:
             return False
+        if result.find('投票成功!') != -1:
+            count += 1
     except socket.timeout:
         print('bad proxy:' + proxy_elem['ip'])
     except ConnectionResetError:
@@ -113,8 +117,7 @@ def vote(proxy_str):
         print('bad proxy:' + proxy_elem['ip'])
     except urllib.error.URLError:
         print('bad proxy:' + proxy_elem['ip'])
-    finally:
-        return True
+    return True
 
 
 def load_proxy():
@@ -139,9 +142,10 @@ def for_every_thread():
         proxy = proxy_queue.get()
         for loop in range(0, 12):
             if not vote(proxy):
+                print('******** full vote ********')
                 break
             time.sleep(random.random() * 2)
-        print('######## progress:%d/%d' % (proxy_queue.qsize(), proxy_sum))
+        print('######## progress:%d/%d ########' % (proxy_queue.qsize(), proxy_sum))
 
 
 class ProxyThread(threading.Thread):
