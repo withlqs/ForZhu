@@ -85,7 +85,7 @@ def vote(proxy_str):
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie))
     request = urllib.request.Request(
         url=login_url,
-        data=bytes('118', 'utf-8'),
+        data=bytes('119', 'utf-8'),
         headers=header,
     )
     proxy_elem = {
@@ -117,6 +117,9 @@ def load_proxy():
     proxy_list = set()
     f_in = open('proxy.list', 'r', encoding='utf-8')
     for line in f_in.readlines():
+        line = line.strip()
+        if len(line.split('@')) < 3:
+            continue
         proxy_list.add(
             line.split('@')[0] +
             '@' + line.split('@')[1] +
@@ -129,7 +132,7 @@ def load_proxy():
 def for_every_proxy(proxy):
     for i in range(0, 12):
         vote(proxy)
-        time.sleep(random.random() * 2)
+        time.sleep(random.random() * 3)
 
 
 class ProxyThread(threading.Thread):
@@ -155,6 +158,6 @@ if __name__ == '__main__':
         t.join()
 
     for p in usable_proxy:
-        f_out.write(p + '\n')
+        f_out.write(p.strip() + '\n')
     print(len(usable_proxy))
     f_out.close()
