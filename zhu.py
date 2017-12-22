@@ -7,6 +7,8 @@ import time
 import urllib.request
 from http.cookiejar import CookieJar
 
+import ippool
+
 usable_proxy = set()
 proxy_queue = queue.Queue()
 proxy_sum = 0
@@ -137,6 +139,8 @@ def load_proxy():
             '@' + line.split('@')[2].lower().strip()
         )
     f_in.close()
+    for ip in ippool.load_extra_pool():
+        proxy_set.add(ip.strip().split(':')[0] + '@' + ip.strip().split(':')[1] + '@http')
     return list(proxy_set)
 
 
@@ -146,7 +150,7 @@ def for_every_thread():
         proxy = proxy_queue.get()
         for loop in range(0, 12):
             if not vote(proxy):
-                print('******** full vote ********')
+                # print('******** full vote ********')
                 break
             time.sleep(random.random() * 2)
         print('######## progress:%d/%d voted:%d ########' % (proxy_queue.qsize(), proxy_sum, count))
