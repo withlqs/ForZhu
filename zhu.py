@@ -70,7 +70,6 @@ def vote(proxy_str):
     header = {
         'Host': 'focus.uestc.edu.cn',
         'Connection': 'keep-alive',
-        'Content-Length': '3',
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Origin': 'http://focus.uestc.edu.cn',
         'X-Requested-With': 'XMLHttpRequest',
@@ -87,7 +86,7 @@ def vote(proxy_str):
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie))
     request = urllib.request.Request(
         url=login_url,
-        data=bytes('110', 'utf-8'),
+        data=bytes('118', 'utf-8'),
         headers=header,
     )
     proxy_elem = {
