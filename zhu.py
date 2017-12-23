@@ -7,8 +7,6 @@ import time
 import urllib.request
 from http.cookiejar import CookieJar
 
-import ippool
-
 usable_proxy = set()
 proxy_queue = queue.Queue()
 proxy_sum = 0
@@ -80,23 +78,24 @@ def vote(proxy_str):
         'Referer': 'http://focus.uestc.edu.cn/specialtopic/28/vote?type=people',
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9',
-        # 'X-Forwarded-For': ip,
-        # 'X-Real-IP': ip
     }
     login_url = 'http://focus.uestc.edu.cn/specialtopic/28/vote?type=people'
     cookie = CookieJar()
+    print(cookie.__str__())
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie))
     request = urllib.request.Request(
         url=login_url,
-        data=bytes('118', 'utf-8'),
+        data=bytes('120', 'utf-8'),
         headers=header,
     )
     proxy_elem = {
         'ip': proxy_str.split('@')[0],
         'port': proxy_str.split('@')[1],
-        'method': proxy_str.split('@')[2].lower()
+        # 'method': proxy_str.split('@')[2].lower(),
+        'method': 'http'
     }
-    request.set_proxy(proxy_elem['ip'] + ':' + proxy_elem['port'], 'http')
+    # request.set_proxy(proxy_elem['ip'] + ':' + proxy_elem['port'], 'http')
+    # print(proxy_str)
 
     try:
         result = str(opener.open(request, timeout=12).read().decode('unicode-escape'))
@@ -110,7 +109,6 @@ def vote(proxy_str):
             return True
         else:
             return True
-
     except socket.timeout:
         print('bad proxy:' + proxy_elem['ip'])
     except ConnectionResetError:
@@ -131,16 +129,17 @@ def load_proxy():
     f_in = open('proxy.list', 'r', encoding='utf-8')
     for line in f_in.readlines():
         line = line.strip()
-        if len(line.split('@')) < 3:
+        if len(line.split('@')) < 2:
             continue
         proxy_set.add(
             line.split('@')[0].strip() +
             '@' + line.split('@')[1].strip() +
-            '@' + line.split('@')[2].lower().strip()
+            # '@' + line.split('@')[2].lower().strip()
+            '@http'
         )
     f_in.close()
-    for ip in ippool.load_extra_pool():
-        proxy_set.add(ip.strip().split(':')[0] + '@' + ip.strip().split(':')[1] + '@http')
+    # for ip in ippool.load_extra_pool():
+    #     proxy_set.add(ip.strip().split(':')[0] + '@' + ip.strip().split(':')[1] + '@http')
     return list(proxy_set)
 
 
